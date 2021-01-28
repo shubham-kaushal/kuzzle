@@ -114,5 +114,6 @@ lib/types/Token.js
 lib/types/User.js
 lib/types/index.js
 lib/util/interfaces.js
+lib/util/inflector.js
 lib/util/mutex.js
 features-sdk/support/application/functional-tests-app.js

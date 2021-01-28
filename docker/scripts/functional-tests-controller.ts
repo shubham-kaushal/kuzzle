@@ -14,14 +14,16 @@ export class FunctionalTestsController extends Controller {
         },
         create: {
           handler: this.create,
-          args: [
-            { name: 'index', type: 'string' },
-            { name: 'collection', type: 'string' },
-            { name: 'body', type: 'JSONObject' },
-          ],
-          opts: {
-            _id: 'string',
-            refresh: 'string',
+          params: {
+            args: [
+              { name: 'index', type: 'string' },
+              { name: 'collection', type: 'string' },
+              { name: 'body', type: 'JSONObject' },
+            ],
+            opts: {
+              _id: 'string',
+              refresh: 'string',
+            }
           }
         }
       }

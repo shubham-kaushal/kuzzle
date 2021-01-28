@@ -19,7 +19,7 @@
   },
   "rootDir": "lib/",
   "files": [
-    "lib/types/Global.d.ts"
+    "lib/types/Global.ts"
   ],
   "include": [
     "lib/**/*.ts",
