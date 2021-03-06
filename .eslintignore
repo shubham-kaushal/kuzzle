@@ -7,6 +7,7 @@
 /index.js
 lib/core/backend/index.js
 lib/core/backend/backend.js
+lib/core/backend/backendPlugin.js
 lib/core/backend/backendCluster.js
 lib/core/shared/sdk/embeddedSdk.js
 lib/core/plugin/pluginContext.js
@@ -43,6 +44,8 @@ lib/types/ResponsePayload.js
 lib/types/StrategyDefinition.js
 lib/types/Token.js
 lib/types/User.js
+lib/types/Global.d.ts
+lib/types/Global.js
 lib/util/interfaces.js
 lib/util/inflector.js
 lib/util/mutex.js

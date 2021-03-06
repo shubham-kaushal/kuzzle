@@ -80,6 +80,55 @@ describe('Test: ElasticSearch service', () => {
     });
   });
 
+  describe('#stats', () => {
+    beforeEach(() => {
+      elasticsearch._client.indices.stats.resolves({
+        body: {
+          indices: {
+            '%kuzzle.users': {
+              total: { docs: { count: 1 }, store: { size_in_bytes: 10 } }
+            },
+            '&test-index._kuzzle_keep': {
+              total: { docs: { count: 0 }, store: { size_in_bytes: 10 } }
+            },
+            '&test-index.test-collection': {
+              total: { docs: { count: 2 }, store: { size_in_bytes: 20 } }
+            }
+          }
+        }
+      });
+    });
+
+    it('should only request required stats from underlying client', async () => {
+      const esRequest = {
+        metric: ['docs', 'store'],
+      };
+
+      await elasticsearch.stats();
+
+      should(elasticsearch._client.indices.stats)
+        .calledOnce()
+        .calledWithMatch(esRequest);
+    });
+
+    it('should as default ignore private and hidden indices', async () => {
+      const result = await elasticsearch.stats();
+
+      should(result).be.match({
+        size: 20,
+        indexes: [{
+          name: 'test-index',
+          size: 20,
+          collections: [{
+            name: 'test-collection',
+            documentCount: 2,
+            size: 20,
+          }]
+        }]
+      });
+    });
+  });
+
   describe('#scroll', () => {
     it('should be able to scroll an old search', async () => {
       const cacheStub = kuzzle.ask
@@ -1283,39 +1332,37 @@ describe('Test: ElasticSearch service', () => {
         });
     });
 
-    it('should allow additional options', () => {
-      const promise = elasticsearch.updateByQuery(
+    it('should allow additional options', async () => {
+      const result = await elasticsearch.updateByQuery(
         index,
         collection,
         { filter: 'term' },
         { name: 'bar'},
-        { refresh: 'wait_for', size: 3 });
+        { refresh: 'wait_for', size: 3, userId: 'aschen' });
 
-      return promise
-        .then(result => {
-          should(elasticsearch._getAllDocumentsFromQuery).be.calledWithMatch({
-            index: esIndexName,
-            body: { query: { filter: 'term'} },
-            scroll: '5s',
-            size: 3
-          });
+      should(elasticsearch._getAllDocumentsFromQuery).be.calledWithMatch({
+        index: esIndexName,
+        body: { query: { filter: 'term'} },
+        scroll: '5s',
+        size: 3
+      });
 
-          should(elasticsearch.mUpdate).be.calledWithMatch(
-            index,
-            collection,
-            documents,
-            {
-              refresh: 'wait_for'
-            });
-
-          should(result).match({
-            successes: [
-              { _id: '_id1', _source: { name: 'bar' }, status: 200 },
-              { _id: '_id2', _source: { name: 'bar' }, status: 200 },
-            ],
-            errors: []
-          });
+      should(elasticsearch.mUpdate).be.calledWithMatch(
+        index,
+        collection,
+        documents,
+        {
+          refresh: 'wait_for',
+          userId: 'aschen',
         });
+
+      should(result).match({
+        successes: [
+          { _id: '_id1', _source: { name: 'bar' }, status: 200 },
+          { _id: '_id2', _source: { name: 'bar' }, status: 200 },
+        ],
+        errors: []
+      });
     });
 
     it('should reject if the number of impacted documents exceeds the configured limit', () => {

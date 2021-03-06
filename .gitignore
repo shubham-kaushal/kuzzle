@@ -78,6 +78,7 @@ upgrade-*.report
 lib/core/backend/index.js
 lib/core/backend/backend.js
 lib/core/backend/backendCluster.js
+lib/core/backend/backendPlugin.js
 lib/core/shared/sdk/embeddedSdk.js
 lib/core/plugin/pluginContext.js
 lib/api/request/index.js
@@ -113,7 +114,11 @@ lib/types/StrategyDefinition.js
 lib/types/Token.js
 lib/types/User.js
 lib/types/index.js
+lib/types/Global.d.ts
+lib/types/Global.js
 lib/util/interfaces.js
 lib/util/inflector.js
 lib/util/mutex.js
 features-sdk/support/application/functional-tests-app.js
+docker/scripts/functional-tests-controller.js
+docker/scripts/start-kuzzle-dev.js
