@@ -272,6 +272,28 @@ Feature: Document Controller
       | name | "replaced1" |
 
   @mappings
+  Scenario: CreateOrReplace multiple documents with option
+    Given an existing collection "nyc-open-data":"yellow-taxi"
+    And I "create" the following documents:
+      | _id          | body                               |
+      | "document-1" | { "name": "document1", "age": 42 } |
+    When I successfully execute the action "document":"mCreateOrReplace" with args:
+      | index      | "nyc-open-data"        |
+      | collection | "yellow-taxi"          |
+      | _id        | "document-1"           |
+      | body       | { "documents": [{"_id": "document-1", "body":{"name": "replaced1"}}, {"body":{"name": "document2"}}] } |
+      | source     | false                   |
+    Then I should receive a "successes" array of objects matching:
+      | _id          | _source       | status | result    |
+      | "document-1" | "_UNDEFINED_" | 200    | "updated" |
+      | -            | "_UNDEFINED_" | 201    | "created" |
+    And I should receive a empty "errors" array
+    And I refresh the collection
+    And I count 2 documents
+    And The document "document-1" content match:
+      | name | "replaced1" |
+
+  @mappings
   Scenario: CreateOrReplace multiple documents with errors
     Given an existing collection "nyc-open-data":"yellow-taxi"
     When I "createOrReplace" the following documents:

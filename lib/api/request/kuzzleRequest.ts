@@ -489,9 +489,10 @@ export class KuzzleRequest {
    * error, instead it's considered as 'false'
    *
    * @param name parameter name
+   * @param def default value
    */
-  getBoolean (name: string): boolean {
-    return this._getBoolean(this.input.args, name, name);
+  getBoolean (name: string, def: boolean | null = null): boolean {
+    return this._getBoolean(this.input.args, name, name, def);
   }
 
   /**
@@ -774,8 +775,9 @@ export class KuzzleRequest {
    * @param obj container object
    * @param name parameter name
    * @param errorName name to use in error messages
+   * @param def default value
    */
-  private _getBoolean (obj: JSONObject, name: string, errorName: string): boolean {
+  private _getBoolean (obj: JSONObject, name: string, errorName: string, def: boolean | null = null): boolean {
     let value = get(obj, name);
 
     // In HTTP, booleans are flags: if it's in the querystring, it's set,
@@ -783,11 +785,16 @@ export class KuzzleRequest {
     // If a user needs to unset the option, they need to remove it from the
     // querystring.
     if (this.context.connection.protocol === 'http') {
-      value = value !== undefined;
+      if ((value === undefined || value === null) && def !== null) {
+        value = def;
+      }
+      else {
+        value = value !== undefined;
+      }
       obj[name] = value;
     }
     else if (value === undefined || value === null) {
-      value = false;
+      value = def ? def : false;
     }
     else if (typeof value !== 'boolean') {
       throw assertionError.get('invalid_type', errorName, 'boolean');
