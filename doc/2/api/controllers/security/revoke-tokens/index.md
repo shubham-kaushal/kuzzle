@@ -6,7 +6,9 @@ title: revokeTokens
 
 # revokeTokens
 
+<DeprecatedBadge version="auto-version">
 
+__Use [user:revokeTokens](/core/2/api/controllers/user/revoke-tokens) instead.__
 
 Revokes every token of a given user.
 

@@ -6,7 +6,9 @@ title: replaceUser
 
 # replaceUser
 
+<DeprecatedBadge version="auto-version">
 
+__Use [user:replace](/core/2/api/controllers/user/replace) instead.__
 
 Replaces a user with new configuration.
 

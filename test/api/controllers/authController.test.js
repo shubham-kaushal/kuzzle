@@ -17,7 +17,7 @@ const KuzzleMock = require('../../mocks/kuzzle.mock');
 const AuthController = require('../../../lib/api/controllers/authController');
 const Token = require('../../../lib/model/security/token');
 const User = require('../../../lib/model/security/user');
-const { NativeController } = require('../../../lib/api/controllers/baseController');
+const NativeController = require('../../../lib/api/controllers/base/nativeController');
 
 describe('Test the auth controller', () => {
   let request;
@@ -108,6 +108,70 @@ describe('Test the auth controller', () => {
 
       await should(authController.checkRights(request))
         .be.rejectedWith({ id: 'api.assert.missing_argument' });
+    });
+  });
+
+  describe('#signin', () => {
+    const createEvent = 'core:security:user:create';
+    const createdUser = { _id: 'foo', _source: { bar: 'baz' } };
+    let createStub;
+
+    beforeEach(() => {
+      createStub = kuzzle.ask.withArgs(createEvent).resolves(createdUser);
+      request.input.args._id = 'test';
+      request.input.body = {
+        content: { name: 'John Doe' }
+      };
+
+      kuzzle.config.security.restrictedProfileIds = [ 'foo', 'bar' ];
+    });
+
+    it('should return a valid response', async () => {
+      const response = await authController.signin(request);
+
+      should(createStub)
+        .calledOnce()
+        .calledWithMatch(
+          createEvent,
+          request,
+          kuzzle.config.security.restrictedProfileIds,
+          { name: 'John Doe' });
+
+      should(createStub.firstCall.args[2])
+        .not.have.ownProperty('profileIds');
+
+      should(response).eql(createdUser);
+    });
+
+    it('should reject if profileIds are given', async () => {
+      request.input.body.content.profileIds = [ 'ohnoes' ];
+
+      await should(authController.signin(request))
+        .rejectedWith(BadRequestError, {
+          id: 'api.assert.forbidden_argument',
+          message: 'The argument "body.content.profileIds" is not allowed by this API action.'
+        });
+
+      should(createStub).not.called();
+    });
+
+    it('should allow the request to not have a body content', async () => {
+      request.input.body = null;
+
+      const response = await authController.signin(request);
+
+      should(createStub)
+        .calledOnce()
+        .calledWithMatch(
+          createEvent,
+          request,
+          kuzzle.config.security.restrictedProfileIds,
+          {});
+
+      should(createStub.firstCall.args[2])
+        .not.have.ownProperty('profileIds');
+
+      should(response).eql(createdUser);
     });
   });
 

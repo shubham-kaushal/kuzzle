@@ -6,6 +6,10 @@ title: createFirstAdmin
 
 # createFirstAdmin
 
+<DeprecatedBadge version="auto-version" />
+
+__Use [user:create](/core/2/api/controllers/user/create) with admin profile instead.__
+
 Creates a Kuzzle administrator account, only if none exist.
 
 ---
@@ -95,7 +99,7 @@ Returns information about the newly created administrator:
   "volatile": {},
   "requestId": "<unique request identifier>",
   "result": {
-    "_id": "<kuid>",                  // The kuzzle user identifier
+    "_id": "<kuid>", // The kuzzle user identifier
     "_source": {
       "name": "John Doe",
       "profileIds": [

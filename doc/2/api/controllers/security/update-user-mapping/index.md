@@ -6,7 +6,9 @@ title: updateUserMapping
 
 # updateUserMapping
 
+<DeprecatedBadge version="auto-version">
 
+__Use [user:updateMappings](/core/2/api/controllers/user/update-mappings) instead.__
 
 Updates the internal user storage mapping.
 

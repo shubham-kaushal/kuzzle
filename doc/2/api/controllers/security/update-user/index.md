@@ -6,6 +6,10 @@ title: updateUser
 
 # updateUser
 
+<DeprecatedBadge version="auto-version">
+
+__Use [user:update](/core/2/api/controllers/user/update) instead.__
+
 Updates a user definition.
 
 ---
@@ -57,7 +61,7 @@ Body:
 
 ## Response
 
-Returns the update user kuid and version number.
+Returns the updated user.
 
 ```js
 {
@@ -68,7 +72,9 @@ Returns the update user kuid and version number.
   "requestId": "<unique request identifier>",
   "result": {
     "_id": "<kuid>",
-    "_version": 2
+    "_source": {
+      // User content
+    }
   }
 }
 ```

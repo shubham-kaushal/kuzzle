@@ -6,7 +6,9 @@ title: mDeleteUsers
 
 # mDeleteUsers
 
+<DeprecatedBadge version="auto-version">
 
+__Use [user:mDelete](/core/2/api/controllers/user/m-delete) instead.__
 
 Deletes multiple users.
 

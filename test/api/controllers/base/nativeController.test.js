@@ -3,11 +3,11 @@
 const should = require('should');
 const sinon = require('sinon');
 
-const { BadRequestError } = require('../../../index');
-const KuzzleMock = require('../../mocks/kuzzle.mock');
-const { NativeController } = require('../../../lib/api/controllers/baseController');
+const KuzzleMock = require('../../../mocks/kuzzle.mock');
+const NativeController = require('../../../../lib/api/controllers/base/nativeController');
+const { BadRequestError } = require('../../../../index');
 
-describe('#base/native controller', () => {
+describe('NativeController', () => {
   let kuzzle;
   let actions;
   let nativeController;
