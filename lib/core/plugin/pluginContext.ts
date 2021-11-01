@@ -61,21 +61,21 @@ import { BackendCluster } from '../backend';
 const contextError = kerror.wrap('plugin', 'context');
 
 export interface Repository {
- create(document: JSONObject, options: any): Promise<any>;
+ create(document: JSONObject, options?: any): Promise<any>;
 
- createOrReplace(document: JSONObject, options: any): Promise<any>;
+ createOrReplace(document: JSONObject, options?: any): Promise<any>;
 
- delete(documentId: string, options: any): Promise<any>;
+ delete(documentId: string, options?: any): Promise<any>;
 
  get(documentId: string): Promise<any>;
 
  mGet(ids: string[]): Promise<any>;
 
- replace(document: JSONObject, options: any): Promise<any>;
+ replace(document: JSONObject, options?: any): Promise<any>;
 
- search(query: JSONObject, options: any): Promise<any>;
+ search(query: JSONObject, options?: any): Promise<any>;
 
- update(document: JSONObject, options: any): Promise<any>;
+ update(document: JSONObject, options?: any): Promise<any>;
 }
 
 export class PluginContext {
@@ -171,7 +171,7 @@ export class PluginContext {
     /**
      * Plugin private storage space
      */
-    Repository: new (collection: string, objectConstructor: any) => Repository;
+    Repository: new (collection: string, objectConstructor?: any) => Repository;
     /**
      * Instantiate a new Request from the original one.
      */
