@@ -264,6 +264,11 @@ export class Backend {
     catch {
       // catch errors and leave commit value to "null"
     }
+
+    // Instantiate SDK in this event so it can be used by pipes/hooks on this event
+    this.pipe.register('kuzzle:state:ready', async () => {
+      this._sdk = new EmbeddedSDK();
+    });
   }
 
   /**
@@ -302,8 +307,6 @@ export class Backend {
     };
 
     await this._kuzzle.start(application, options);
-
-    this._sdk = new EmbeddedSDK();
 
     this.started = true;
   }

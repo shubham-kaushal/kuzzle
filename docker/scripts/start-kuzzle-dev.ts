@@ -108,6 +108,11 @@ app.hook.register('custom:event', async (name) => {
 let syncedHello = 'World';
 let dynamicPipeId;
 
+// Test: Ensure we can use the SDK in a pipe/hook on this event
+app.pipe.register('kuzzle:state:ready', async () => {
+  await app.sdk.server.now();
+});
+
 app.controller.register('tests', {
   actions: {
     // Controller registration and http route definition
