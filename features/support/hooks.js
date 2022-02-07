@@ -56,6 +56,15 @@ Before(({ timeout: 10 * 1000 }), async function () {
   await this.sdk.auth.login(
     'local',
     { username: 'test-admin', password: 'password' });
+
+    await this.sdk.query({
+      action: 'download-stream',
+      controller: 'tests',
+      host: 'localhost',
+      port: 7512,
+      path: `/nyc-open-data/yellow-taxi/_export?format=jsonl`,
+      method: 'GET',
+    });
 });
 
 Before(({ tags: 'not @preserveDatabase' }), async function () {

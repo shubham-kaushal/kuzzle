@@ -22,6 +22,7 @@ class KuzzleWorld {
     this.props = {};
 
     this._sdk = this._getSdk();
+    
   }
 
   get sdk () {

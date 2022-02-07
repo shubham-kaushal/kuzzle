@@ -207,6 +207,24 @@ Feature: Document Controller
     And I refresh the collection
     Then The document "document-1" should not exist
 
+  # document:export ============================================================
+
+  @mappings
+  @http
+  Scenario: Verify exported documents in format jsonl
+    Given an existing collection "nyc-open-data":"yellow-taxi"
+    Then The document "document-1" should not exist
+    And The document "document-2" should not exist
+    When I "create" the following documents:
+      | _id          | body                               |
+      | "document-1" | { "name": "document1", "age": 42 } |
+      | "document-2" | { "name": "document2", "age": 666 } |
+    When I export the collection "nyc-open-data":"yellow-taxi" in the format "jsonl"
+    Then the streamed data should be equal to:
+      | {"collection":"yellow-taxi,"index":nyc-open-data","type":"collection"}                                                                               |
+      | {"_id":"document-1","body":{"fieldA":"A","fieldB":42,"_kuzzle_info":{"author":"-1","createdAt":/\d+/,"updatedAt":null,"updater":null}}} |
+      | {"_id":"document-2","body":{"fieldA":"B","fieldB":0,"_kuzzle_info":{"author":"-1","createdAt":/\d+/,"updatedAt":null,"updater":null}}}  |
+
   # document:mCreate ===========================================================
 
   @mappings

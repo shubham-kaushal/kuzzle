@@ -9,6 +9,7 @@ import { omit } from 'lodash';
 import { Backend, KuzzleRequest, Mutex } from '../../index';
 import { FunctionalTestsController } from './functional-tests-controller';
 import functionalFixtures from '../../features/fixtures/imports.json';
+import http from 'http';
 
 const app = new Backend('functional-tests-app');
 
@@ -204,6 +205,58 @@ app.controller.register('tests', {
         app.pipe.unregister(dynamicPipeId);
       }
     },
+
+    'download-stream':  {
+      handler: async (request: KuzzleRequest) => {
+        const host = request.getString('host');
+        const port = request.getInteger('port');
+        const path = request.getString('path');
+        const method = request.getString('method');
+
+        console.log(request);
+
+        return await new Promise((resolve, reject) => {
+
+          const req = http.request({
+            hostname: host,
+            port: port,
+            path: path,
+            method: method,
+          }, (response) => {
+            let data = [];
+
+            response.on('data', (chunk) => {
+              console.log(chunk.length);
+              data.push(chunk.toString());
+            });
+      
+            response.on('end', () => {
+              console.log('========================================');
+              const str = data.join('');
+              console.log(data.length);
+              for (const line of data) {
+                console.log(line);
+              }
+              console.log(str.length);
+              console.log(str);
+              console.log('========================================');
+              resolve(str);
+            });
+      
+            response.on('error', (error) => {
+              reject(error);
+            });
+          });
+
+          req.on('error', err => {
+            // @ts-ignore
+            console.log(err.rawPacket);
+          })
+      
+          req.end();
+        });
+      }
+    }
   },
 });
 

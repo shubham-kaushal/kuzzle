@@ -110,6 +110,7 @@ abstract class AbstractDumper {
     protected readonly batchSize: number,
     protected readonly query: any = {},
     protected readonly writeStream: stream.Writable,
+    protected readonly dumpOptions: JSONObject
   ) {
     this.options = {
       scroll: '30s',
@@ -259,16 +260,19 @@ class JSONLDumper extends AbstractDumper {
 }
 
 class CSVDumper extends AbstractDumper {
+  private separator = ',';
+
   constructor (
     index: string,
     collection: string,
     batchSize: number,
     query: any = {},
     writeStream: stream.Writable,
+    dumpOptions: JSONObject,
     protected fields: string[],
-    protected readonly separator = ','
   ) {
-    super(index, collection, batchSize, query, writeStream);
+    super(index, collection, batchSize, query, writeStream, dumpOptions);
+    this.separator = dumpOptions.separator || ',';
   }
 
   protected get fileExtension (): string {
@@ -314,16 +318,16 @@ class CSVDumper extends AbstractDumper {
   }
 }
 
-export async function dumpCollectionData (writableStream: stream.Writable, index: string, collection: string, batchSize: number, query: any = {}, format = 'jsonl', fields: string[] = []) {
+export async function dumpCollectionData (writableStream: stream.Writable, index: string, collection: string, batchSize: number, query: any = {}, format = 'jsonl', fields: string[] = [], options: JSONObject = {}) {
   let dumper: AbstractDumper;
 
   switch (format.toLowerCase()) {
     case 'csv':
-      dumper = new CSVDumper(index, collection, batchSize, query, writableStream, fields);
+      dumper = new CSVDumper(index, collection, batchSize, query, writableStream, options, fields);
       return dumper.dump();
 
     default:
-      dumper = new JSONLDumper(index, collection, batchSize, query, writableStream);
+      dumper = new JSONLDumper(index, collection, batchSize, query, writableStream, options);
       return dumper.dump();
   }
 }

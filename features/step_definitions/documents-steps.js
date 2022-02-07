@@ -1,6 +1,7 @@
 'use strict';
 
 const
+  axios = require('axios'),
   _ = require('lodash'),
   should = require('should'),
   {
@@ -215,4 +216,22 @@ Then('I delete the document {string}', async function (id) {
     this.props.index,
     this.props.collection,
     id);
+});
+
+const f1 = async  () => {
+
+  console.log(response);
+}
+
+Then('I export the collection {string}:{string} in the format {string}', async function (index, collection, format) {
+
+  await this.sdk.query({
+    action: 'download-stream',
+    controller: 'tests',
+    host: 'localhost',
+    port: 7512,
+    path: `/nyc-open-data/yellow-taxi/_export?format=jsonl`,
+    method: 'GET',
+  });
+  
 });
